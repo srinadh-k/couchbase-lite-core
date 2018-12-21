@@ -241,7 +241,7 @@ namespace c4Internal {
         RecordEnumerator e(defaultKeyStore(), options);
         unordered_set<string> usedDigests;
         while (e.next()) {
-            auto doc = documentFactory().newDocumentInstance(*e);
+            Retained<Document> doc = documentFactory().newDocumentInstance(*e);
             doc->selectCurrentRevision();
             do {
                 if(!doc->loadSelectedRevBody()) {
@@ -274,8 +274,6 @@ namespace c4Internal {
                     }
                 }
             } while(doc->selectNextRevision());
-            
-            delete doc;
         }
         
         return usedDigests;
