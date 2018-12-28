@@ -30,12 +30,22 @@
 #include <assert.h>
 
 
+// C4Error equality tests:
+// (These have to be in the global namespace, because C4Error is...)
+static inline bool operator== (C4Error a, C4Error b) {
+    return a.code == b.code && a.domain == b.domain;
+}
+static inline bool operator!= (C4Error a, C4Error b) {
+    return !(a == b);
+}
+
+
 namespace c4 {
 
     // The functions the ref<> template calls to free a reference.
-    static inline void freeRef(C4Database* c)          {c4db_free(c);}
+    static inline void freeRef(C4Database* c)          {c4db_release(c);}
     static inline void freeRef(C4RawDocument* c)       {c4raw_free(c);}
-    static inline void freeRef(C4Document* c)          {c4doc_free(c);}
+    static inline void freeRef(C4Document* c)          {c4doc_release(c);}
     static inline void freeRef(C4DocEnumerator* c)     {c4enum_free(c);}
     static inline void freeRef(C4DatabaseObserver* c)  {c4dbobs_free(c);}
     static inline void freeRef(C4DocumentObserver* c)  {c4docobs_free(c);}
