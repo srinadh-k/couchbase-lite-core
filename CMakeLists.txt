@@ -196,10 +196,12 @@ endif()
 set(GENERATED_HEADERS_DIR "${CMAKE_BINARY_DIR}/generated_headers")
 file(MAKE_DIRECTORY "${GENERATED_HEADERS_DIR}")
 if (UNIX)
-    execute_process(COMMAND /bin/bash "${PROJECT_SOURCE_DIR}/build_cmake/scripts/get_repo_version.sh"
+    execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    COMMAND /bin/bash "${PROJECT_SOURCE_DIR}/build_cmake/scripts/get_repo_version.sh"
                                       "${GENERATED_HEADERS_DIR}/repo_version.h")
 else()
-    execute_process(COMMAND powershell "${PROJECT_SOURCE_DIR}/build_cmake/scripts/get_repo_version.ps1"
+    execute_process(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    COMMAND powershell "${PROJECT_SOURCE_DIR}/build_cmake/scripts/get_repo_version.ps1"
                                       "${GENERATED_HEADERS_DIR}/repo_version.h")
 endif()
 include_directories(${GENERATED_HEADERS_DIR})
@@ -333,12 +335,6 @@ else()
     set_target_properties(LiteCore PROPERTIES LINK_FLAGS
 			  "/def:${PROJECT_SOURCE_DIR}/C/c4.def")
     target_link_libraries(LiteCore PRIVATE zlibstatic Ws2_32)
-endif()
-
-### JNI:
-
-if (JNI)
-    add_subdirectory(Java)
 endif()
 
 ### REST LISTENER LIBRARY:
