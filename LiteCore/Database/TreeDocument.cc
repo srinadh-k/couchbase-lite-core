@@ -462,7 +462,6 @@ namespace c4Internal {
     Document* Document::containing(const fleece::impl::Value *value) {
         VersionedDocument *vdoc = VersionedDocument::containing(value);
         return vdoc ? (TreeDocument*)vdoc->owner : nullptr;
-        
     }
 
 
