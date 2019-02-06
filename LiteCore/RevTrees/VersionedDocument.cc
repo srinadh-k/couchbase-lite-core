@@ -87,8 +87,18 @@ namespace litecore {
         // A Scope associates the SharedKeys with the Fleece data in the body, so Fleece Dict
         // accessors can decode the int keys.
         if (body)
-            _fleeceScopes.emplace_back(body, _store.dataFile().documentKeys());
+            _fleeceScopes.emplace_back(body, _store.dataFile().documentKeys(), this);
         return body;
+    }
+
+    VersionedDocument* VersionedDocument::containing(const Value *value) {
+        const Scope *scope = fleece::impl::Scope::containing(value);
+        if (!scope)
+            return nullptr;
+        auto versScope = dynamic_cast<const VersDocScope*>(scope);
+        if (!versScope)
+            return nullptr;
+        return versScope->document;
     }
 
     alloc_slice VersionedDocument::copyBody(slice body) {
