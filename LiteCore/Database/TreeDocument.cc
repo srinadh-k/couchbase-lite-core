@@ -41,7 +41,7 @@ namespace c4Internal {
     class TreeDocument : public Document {
     public:
         TreeDocument(Database* database, C4Slice docID)
-        :Document(database),
+        :Document(database, docID),
          _versionedDoc(database->defaultKeyStore(), docID),
          _selectedRev(nullptr)
         {
@@ -50,7 +50,7 @@ namespace c4Internal {
 
 
         TreeDocument(Database *database, const Record &doc)
-        :Document(database),
+        :Document(database, doc.key()),
          _versionedDoc(database->defaultKeyStore(), doc),
          _selectedRev(nullptr)
         {
@@ -75,7 +75,6 @@ namespace c4Internal {
 
         void init() {
             _versionedDoc.owner = this;
-            docID = _docIDBuf = _versionedDoc.docID();
             flags = (C4DocumentFlags)_versionedDoc.flags();
             if (_versionedDoc.exists())
                 flags = (C4DocumentFlags)(flags | kDocExists);
@@ -85,12 +84,7 @@ namespace c4Internal {
         }
 
         void initRevID() {
-            if (_versionedDoc.revID().size > 0) {
-                _revIDBuf = _versionedDoc.revID().expanded();
-            } else {
-                _revIDBuf = nullslice;
-            }
-            revID = _revIDBuf;
+            setRevID(_versionedDoc.revID());
             sequence = _versionedDoc.sequence();
         }
 
@@ -122,7 +116,6 @@ namespace c4Internal {
 
         bool selectRevision(const Rev *rev) noexcept {   // doesn't throw
             _selectedRev = rev;
-            _loadedBody = nullslice;
             if (rev) {
                 _selectedRevIDBuf = rev->revID.expanded();
                 selectedRev.revID = _selectedRevIDBuf;

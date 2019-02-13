@@ -245,6 +245,42 @@ N_WAY_TEST_CASE_METHOD(C4Test, "Document CreateMultipleRevisions", "[Database][C
     c4doc_free(doc);
 }
 
+
+N_WAY_TEST_CASE_METHOD(C4Test, "Document Get Single Revision", "[Document][C]") {
+    if (!isRevTrees()) return;
+
+    createRev(kDocID, kRevID, kEmptyFleeceBody);
+    createRev(kDocID, kRev2ID, kEmptyFleeceBody);
+    createRev(kDocID, kRev3ID, kFleeceBody);
+
+    C4Error error;
+    for (int withBody = false; withBody <= true; ++withBody) {
+        C4Document *doc = c4doc_getSingleRevision(db, kDocID, nullslice, withBody, &error);
+        REQUIRE(doc);
+        CHECK(doc->sequence == 3);
+        CHECK(doc->flags == kDocExists);
+        CHECK(doc->docID == kDocID);
+        CHECK(doc->revID == kRev3ID);
+        CHECK(doc->selectedRev.revID == kRev3ID);
+        CHECK(doc->selectedRev.sequence == 3);
+        if (withBody)
+            CHECK(doc->selectedRev.body == kFleeceBody);
+        else
+            CHECK(doc->selectedRev.body == nullslice);
+        c4doc_free(doc);
+    }
+
+    C4Document *doc = c4doc_getSingleRevision(db, kDocID, "99-ffff"_sl, true, &error);
+    CHECK(!doc);
+    CHECK(error.domain == LiteCoreDomain);
+    CHECK(error.code == kC4ErrorNotFound);
+
+    doc = c4doc_getSingleRevision(db, "missing"_sl, nullslice, true, &error);
+    CHECK(!doc);
+    CHECK(error.domain == LiteCoreDomain);
+    CHECK(error.code == kC4ErrorNotFound);
+}
+
 N_WAY_TEST_CASE_METHOD(C4Test, "Document Purge", "[Database][C]") {
     const auto kFleeceBody2 = json2fleece("{'ok':'go'}");
     const auto kFleeceBody3 = json2fleece("{'ubu':'roi'}");
@@ -511,7 +547,7 @@ N_WAY_TEST_CASE_METHOD(C4Test, "Document Put", "[Database][C]") {
     
     auto latestBody = c4doc_detachRevisionBody(doc);
     CHECK(latestBody == rq.body);
-    CHECK(!doc->selectedRev.body.buf);
+    CHECK(latestBody.buf != doc->selectedRev.body.buf);
     c4doc_free(doc);
 }
 
