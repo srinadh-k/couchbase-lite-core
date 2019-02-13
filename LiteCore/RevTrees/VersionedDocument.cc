@@ -94,20 +94,7 @@ namespace litecore {
     }
 
     VersionedDocument* VersionedDocument::containing(const Value *value) {
-        if (value->isMutable()) {
-            // Scope doesn't know about mutable Values (they're in the heap), but the mutable
-            // Value may be a mutable copy of a Value with scope...
-            if (value->asDict())
-                value = value->asDict()->asMutable()->source();
-            else
-                value = value->asArray()->asMutable()->source();
-            if (!value)
-                return nullptr;
-        }
-        
         const Scope *scope = fleece::impl::Scope::containing(value);
-        if (!scope)
-            return nullptr;
         auto versScope = dynamic_cast<const VersDocScope*>(scope);
         if (!versScope)
             return nullptr;

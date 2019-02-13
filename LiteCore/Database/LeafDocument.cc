@@ -46,6 +46,15 @@ namespace c4Internal {
             if (revID_ && revID_ != slice(revID))
                 failUnsupported();              //TODO: Implement loading non-current revisions
             selectCurrentRevision();
+            if (_body.size > 0)
+                _fleeceDoc = new LeafFleeceDoc(_body, database->documentKeys(), this);
+        }
+
+
+        static LeafDocument* containing(const Value *value) {
+            auto doc = fleece::impl::Doc::containing(value);
+            auto leafDoc = dynamic_cast<const LeafFleeceDoc*>(doc.get());
+            return leafDoc ? leafDoc->document : nullptr;
         }
 
 
@@ -84,11 +93,6 @@ namespace c4Internal {
         }
 
         virtual Retained<fleece::impl::Doc> fleeceDoc() override {
-            if (!_fleeceDoc) {
-                if (!_body)
-                    return nullptr;
-                _fleeceDoc = new Doc(_body, Doc::kTrusted, database()->documentKeys());
-            }
             return _fleeceDoc;
         }
 
@@ -103,8 +107,21 @@ namespace c4Internal {
         virtual bool putNewRevision(const C4DocPutRequest&) override        {failUnsupported();}
         virtual int32_t putExistingRevision(const C4DocPutRequest&) override{failUnsupported();}
     private:
+
+        class LeafFleeceDoc : public fleece::impl::Doc {
+        public:
+            LeafFleeceDoc(const alloc_slice &fleeceData, fleece::impl::SharedKeys* sk,
+                          LeafDocument *document_)
+            :fleece::impl::Doc(fleeceData, Doc::kTrusted, sk)
+            ,document(document_)
+            { }
+
+            LeafDocument* const document;
+        };
+
+
         alloc_slice _body;
-        Retained<Doc> _fleeceDoc;
+        Retained<LeafFleeceDoc> _fleeceDoc;
     };
 
 
@@ -121,5 +138,11 @@ namespace c4Internal {
             return new LeafDocument(database(), docID, revID, withBody);
         }
     }
+
+
+    Document* TreeDocumentFactory::leafDocumentContaining(const Value *value) {
+        return LeafDocument::containing(value);
+    }
+
 
 }

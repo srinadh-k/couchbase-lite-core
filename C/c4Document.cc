@@ -637,8 +637,7 @@ FLDoc c4doc_createFleeceDoc(C4Document *doc) {
 
 
 C4Document* c4doc_containingValue(FLValue value) {
-    Document *doc = Document::containing((const fleece::impl::Value*)value);
-    return doc ? (C4Document*)doc : nullptr;
+    return Document::containing((const fleece::impl::Value*)value);
 }
 
 

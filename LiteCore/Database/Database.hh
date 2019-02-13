@@ -32,6 +32,7 @@ namespace fleece { namespace impl {
     class Dict;
     class Encoder;
     class SharedKeys;
+    class Value;
 } }
 namespace litecore {
     class SequenceTracker;
@@ -182,6 +183,8 @@ namespace c4Internal {
         alloc_slice revIDFromVersion(slice version) override;
         bool isFirstGenRevID(slice revID) override;
         static slice fleeceAccessor(slice docBody);
+
+        static Document* leafDocumentContaining(const fleece::impl::Value*);
     };
 
 }
