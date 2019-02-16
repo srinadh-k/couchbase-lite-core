@@ -5,6 +5,7 @@ function(setup_build_win)
 
     # Use mbedcrypto for hashing, random numbers, etc
     add_definitions(-D_CRYPTO_MBEDTLS)
+    set(LITECORE_CRYPTO_LIB mbedcrypto CACHE INTERNAL "")
     
     # Compile string literals as UTF-8,
     # Enable exception handling for C++ but disable for extern C
@@ -15,7 +16,8 @@ function(setup_build_win)
     #   4819 (character that cannot be represented in current code page)
     #   4800 (value forced to bool)
     # Disable warning about "insecure" C runtime functions (strcpy vs strcpy_s)
-    set(LITECORE_CXX_FLAGS 
+    string(
+        CONCAT LITECORE_CXX_FLAGS 
         "/utf-8 "
         "/EHsc "
         "/wd4068 "
@@ -24,11 +26,11 @@ function(setup_build_win)
         "/wd4819 "
         "/wd4800 "
         "-D_CRT_SECURE_NO_WARNINGS=1"
-        CACHE INTERNAL ""
     )
+    set(LITECORE_CXX_FLAGS ${LITECORE_CXX_FLAGS} CACHE INTERNAL "")
     
-    set(
-        LITECORE_C_FLAGS
+    string(
+        CONCAT LITECORE_C_FLAGS
         "/utf-8 "
         "/wd4068 "
         "/wd4244 "
@@ -36,18 +38,18 @@ function(setup_build_win)
         "/wd4819 "
         "/wd4800 "
         "-D_CRT_SECURE_NO_WARNINGS=1" 
-        CACHE INTERNAL ""
     )
+    set(LITECORE_C_FLAGS ${LITECORE_C_FLAGS} CACHE INTERNAL "")
     
     # Disable the following warnings:
     #   4099 (library linked without debug info)
     #   4221 (object file with no new public symbols)
-    set(
-        LITECORE_SHARED_LINKER_FLAGS 
+    string(
+        CONCAT LITECORE_SHARED_LINKER_FLAGS 
         "/ignore:4099 "
         "/ignore:4221"
-        CACHE INTERNAL ""
     )
+    set(LITECORE_SHARED_LINKER_FLAGS ${LITECORE_SHARED_LINKER_FLAGS} CACHE INTERNAL "")
     
     set(
         LITECORE_STATIC_LINKER_FLAGS

@@ -194,6 +194,7 @@ else()
 endif()
 
 # Library flags defined in platform_linux
+# LITECORE_CRYPTO_LIB defined in platform CMake files
 set(
     LITECORE_LIBRARIES_PRIVATE  
     ${WHOLE_LIBRARY_FLAG}
@@ -204,7 +205,7 @@ set(
     SQLite3_UnicodeSN
     BLIPStatic
     CivetWeb
-    mbedcrypto
+    ${LITECORE_CRYPTO_LIB}
 )
 
 target_link_libraries(LiteCore PRIVATE ${LITECORE_LIBRARIES_PRIVATE})

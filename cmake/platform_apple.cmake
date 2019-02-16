@@ -21,6 +21,7 @@ function(setup_build)
 
     # Use CommonCrypto for things like hashing and random numbers
     add_definitions(-D_CRYPTO_CC)
+    set(LITECORE_CRYPTO_LIB "-framework Security" CACHE INTERNAL "")
 endfunction()
 
 function(configure_litecore)
@@ -33,8 +34,7 @@ function(configure_litecore)
     )
     
     target_link_libraries(
-        LiteCore PUBLIC  
-        "-framework CoreFoundation"
+        LiteCore PUBLIC
         "-framework Foundation"
         "-framework CFNetwork"
         "-framework Security"
