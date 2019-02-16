@@ -16,26 +16,26 @@ function(setup_build_win)
     #   4800 (value forced to bool)
     # Disable warning about "insecure" C runtime functions (strcpy vs strcpy_s)
     set(LITECORE_CXX_FLAGS 
-        "/utf-8 \
-        /EHsc \
-        /wd4068 \
-        /wd4244 \
-        /wd4018 \
-        /wd4819 \
-        /wd4800 \
-        -D_CRT_SECURE_NO_WARNINGS=1"
+        "/utf-8 "
+        "/EHsc "
+        "/wd4068 "
+        "/wd4244 "
+        "/wd4018 "
+        "/wd4819 "
+        "/wd4800 "
+        "-D_CRT_SECURE_NO_WARNINGS=1"
         CACHE INTERNAL ""
     )
     
     set(
         LITECORE_C_FLAGS
-        "/utf-8 \
-        /wd4068 \
-        /wd4244 \
-        /wd4018 \
-        /wd4819 \
-        /wd4800 \
-        -D_CRT_SECURE_NO_WARNINGS=1" 
+        "/utf-8 "
+        "/wd4068 "
+        "/wd4244 "
+        "/wd4018 "
+        "/wd4819 "
+        "/wd4800 "
+        "-D_CRT_SECURE_NO_WARNINGS=1" 
         CACHE INTERNAL ""
     )
     
@@ -44,8 +44,8 @@ function(setup_build_win)
     #   4221 (object file with no new public symbols)
     set(
         LITECORE_SHARED_LINKER_FLAGS 
-        "/ignore:4099 \
-        /ignore:4221"
+        "/ignore:4099 "
+        "/ignore:4221"
         CACHE INTERNAL ""
     )
     

@@ -23,6 +23,17 @@ This project is built for the following platforms at Couchbase:
 - macOS 10.13
 - CentOS 7 (clang / libc++)
 - Android API 19+
+
+Platform logic is largely separated into the cmake/platform_*.cmake files.  Platforms are conglomerated together as follows
+- platform_base
+    - platform_unix
+        - platform_apple
+        - platform_linux
+            - platform_linux_desktop
+            - platform_android
+    - platform_win
+        - platform_win_desktop
+        - platform_win_store
 ]]#
 
 cmake_minimum_required (VERSION 3.1)

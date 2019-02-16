@@ -1,7 +1,7 @@
 include("${CMAKE_CURRENT_LIST_DIR}/platform_unix.cmake")
 
 function(setup_build)
-    set_litecore_source()
+    setup_build_unix()
 
     set(
         PLATFORM_SRC
