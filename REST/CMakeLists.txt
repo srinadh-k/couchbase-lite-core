@@ -1,3 +1,10 @@
+#[[
+LiteCore REST library CMake project
+
+This project builds a simple REST API for LiteCore to use in conjunction with the shared
+library tests.  It is *not* meant to be used anywhere else, so don't do it!
+]]#
+
 cmake_minimum_required (VERSION 3.9)
 cmake_policy(VERSION 3.9)
 project (LiteCoreREST)
@@ -13,6 +20,8 @@ set(CMAKE_C_STANDARD 11)
 
 ### SUBMODULE (CivetWeb):
 
+# Civetweb has been modified so heavily that at this point it is easier
+# to just make a new target here
 set(
     CIVETWEB_SRC
     ../vendor/civetweb/src/civetweb.c

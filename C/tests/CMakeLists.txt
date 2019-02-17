@@ -1,3 +1,24 @@
+#[[
+LiteCore Shared Library Tests CMake Project
+
+This project builds a test runner that links against the shared LiteCore library to
+verify that the exported C API is working correctly.  It uses some predefined data
+as follows:
+
+- Everything in the 'data' directory
+- iosdb.cblite2 database from ../../LiteCore/tests/data/ios120
+
+The test runner depends on multiple other libraries from multiple git repositories:
+
+- LiteCore shared library (../..)
+- LiteCore REST shared library (../../REST)
+- CivetWeb static library (../../endor/civetweb)
+- Fleece static library (../../vendor/fleece)
+- Support static library (../../Support [partial])
+- BLIP static library (../../vendor/BLIP-Cpp) 
+
+In addition, there are also some system dependencies that are not listed here
+]]#
 cmake_minimum_required (VERSION 3.9)
 project (C4Tests)
 
@@ -7,6 +28,7 @@ if(ANDROID)
     return()
 endif()
 
+# This project is not standalone.  Point to the "root" directory
 set(TOP ${PROJECT_SOURCE_DIR}/../../)
 
 if(MSVC)
@@ -56,6 +78,7 @@ target_include_directories(
     ${TOP}vendor/BLIP-Cpp/src/util
 )
 
+# Copy data files to output directory
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/C/tests)
 file(COPY ../../LiteCore/tests/data/replacedb/ios120/iosdb.cblite2
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/LiteCore/tests/data/replacedb/ios120)

@@ -74,30 +74,6 @@ if(BUILD_ENTERPRISE)
     )         
 endif()
 
-# include_directories(
-#     LiteCore/BlobStore
-#     LiteCore/Database
-#     LiteCore/Indexes
-#     LiteCore/Query
-#     LiteCore/RevTrees
-#     LiteCore/Storage
-#     LiteCore/Support
-#     LiteCore/VersionVectors
-#     C/include 
-#     C
-#     vendor/fleece/API
-#     vendor/fleece/Fleece/Core
-#     vendor/fleece/Fleece/Mutable
-#     vendor/fleece/Fleece/Support
-#     vendor/SQLiteCpp/include
-#     vendor/SQLiteCpp/sqlite3
-#     vendor/sqlite3-unicodesn
-#     vendor/BLIP-Cpp/include/blip_cpp
-#     vendor/BLIP-Cpp/src/util
-#     vendor/civetweb/include
-#     vendor/mbedtls/include
-# )
-
 if(MSVC)
     if(WINDOWS_STORE)
         include("${PROJECT_SOURCE_DIR}/cmake/platform_win_store.cmake")
