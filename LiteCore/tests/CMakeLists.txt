@@ -96,4 +96,5 @@ target_link_libraries(
     BLIPStatic
     CivetWeb
     Support
+    ${LITECORE_CRYPTO_LIB}
 )

@@ -24,7 +24,6 @@ function(setup_build)
 
     target_link_libraries(
         CppTests PRIVATE
-        mbedcrypto
         ws2_32
         zlibstatic
     )
