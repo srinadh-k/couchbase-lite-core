@@ -63,62 +63,40 @@ option(BUILD_ENTERPRISE "Set whether or not to build enterprise edition" OFF)
 option(LITECORE_DISABLE_ICU "Disables ICU linking" OFF)
 
 add_definitions(
-    -DSQLITE_OMIT_LOAD_EXTENSION        # This one's for SQLiteCpp
-    -DUSE_WEBSOCKET                     # Enables CivetWeb WebSocket support
-    -DNO_FILES                          # No file system support in CivetWeb (unneeded)
-    -DNO_CGI                            # No CGI support in CivetWeb (unneeded)
-    -DNO_CACHING                        # No file caching support in CivetWeb (unneeded)
-    -DUSE_IPV6                          # Enable IPv6 support in CivetWeb
     -DCMAKE                             # Let the source know this is a CMAKE build
-    -D__STDC_LIMIT_MACROS               # Ensure the presence of UINT64_MAX, etc
-    -DNOMINMAX                          # Get rid of pesky Windows macros for min and max
-    -DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1  # Default to NORMAL sync mode on SQLite (safe with WAL mode)
-    -DSQLITE_LIKE_DOESNT_MATCH_BLOBS    # Optimize SQLite "like" queries
-    -DSQLITE_OMIT_SHARED_CACHE          # Allows SQLite to discard shared cache, eliminating some branches
-    -DSQLITE_OMIT_DECLTYPE              # Disable returning the declared column type from query (reduces memory usage)
-    -DSQLITE_OMIT_DATETIME_FUNCS        # Don't compile SQLite date functions
-    -DSQLITE_ENABLE_EXPLAIN_COMMENTS    # Add comment text to the result of sqlite3_explain
-    -DSQLITE_DISABLE_FTS3_UNICODE       # Disable FTS3 unicode61 tokenizer (not used in LiteCore)
-    -DSQLITE_ENABLE_MEMORY_MANAGEMENT   # Enable sqlite3_release_memory to release unused memory faster
-    -DSQLITE_ENABLE_STAT4               # Enable enhanced query planning
-    -DSQLITE_HAVE_ISNAN                 # Use system provided isnan()
-    -DHAVE_LOCALTIME_R                  # Use localtime_r instead of localtime
-    -DHAVE_USLEEP                       # Allow millisecond precision sleep
-    -DHAVE_UTIME                        # Use utime() instead of utimes()
-    -DSQLITE_OMIT_LOAD_EXTENSION        # Disable extensions (not needed for LiteCore)
-    -DSQLITE_ENABLE_FTS4                # Build FTS versions 3 and 4
-    -DSQLITE_ENABLE_FTS3_PARENTHESIS    # Allow AND and NOT support in FTS parser
-    -DSQLITE_ENABLE_FTS3_TOKENIZER      # Allow LiteCore to define a tokenizer
+    #-D__STDC_LIMIT_MACROS               # Ensure the presence of UINT64_MAX, etc
+    #-DNOMINMAX                          # Get rid of pesky Windows macros for min and max
 )
 
 if(BUILD_ENTERPRISE)
-    add_definitions(-DCOUCHBASE_ENTERPRISE      # Tells LiteCore it's an EE build
-                    -DSQLITE_HAS_CODEC)         # Enables SQLite encryption extension (SEE)
+    add_definitions(
+        -DCOUCHBASE_ENTERPRISE      # Tells LiteCore it's an EE build
+    )         
 endif()
 
-include_directories(
-    LiteCore/BlobStore
-    LiteCore/Database
-    LiteCore/Indexes
-    LiteCore/Query
-    LiteCore/RevTrees
-    LiteCore/Storage
-    LiteCore/Support
-    LiteCore/VersionVectors
-    C/include 
-    C
-    vendor/fleece/API
-    vendor/fleece/Fleece/Core
-    vendor/fleece/Fleece/Mutable
-    vendor/fleece/Fleece/Support
-    vendor/SQLiteCpp/include
-    vendor/SQLiteCpp/sqlite3
-    vendor/sqlite3-unicodesn
-    vendor/BLIP-Cpp/include/blip_cpp
-    vendor/BLIP-Cpp/src/util
-    vendor/civetweb/include
-    vendor/mbedtls/include
-)
+# include_directories(
+#     LiteCore/BlobStore
+#     LiteCore/Database
+#     LiteCore/Indexes
+#     LiteCore/Query
+#     LiteCore/RevTrees
+#     LiteCore/Storage
+#     LiteCore/Support
+#     LiteCore/VersionVectors
+#     C/include 
+#     C
+#     vendor/fleece/API
+#     vendor/fleece/Fleece/Core
+#     vendor/fleece/Fleece/Mutable
+#     vendor/fleece/Fleece/Support
+#     vendor/SQLiteCpp/include
+#     vendor/SQLiteCpp/sqlite3
+#     vendor/sqlite3-unicodesn
+#     vendor/BLIP-Cpp/include/blip_cpp
+#     vendor/BLIP-Cpp/src/util
+#     vendor/civetweb/include
+#     vendor/mbedtls/include
+# )
 
 if(MSVC)
     if(WINDOWS_STORE)
@@ -152,6 +130,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LITECORE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LITECORE_CXX_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${LITECORE_SHARED_LINKER_FLAGS}")
 set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} ${LITECORE_STATIC_LINKER_FLAGS}")
+set(SQLITE3_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/vendor/SQLiteCpp/sqlite3) # For SQLite3_UnicodeSN
 
 add_subdirectory(REST                       EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/fleece              EXCLUDE_FROM_ALL)
@@ -180,11 +159,79 @@ add_library(Support STATIC
     ${PLATFORM_SRC}
 )
 
+target_compile_definitions(
+    Support PRIVATE
+    -DNOMINMAX
+)
+
+target_include_directories(
+    Support PRIVATE
+    vendor/fleece/API
+    vendor/fleece/Fleece/Support
+    LiteCore/Support
+    vendor/mbedtls/include
+    C
+    C/include 
+    vendor/BLIP-Cpp/src/util
+    vendor/SQLiteCpp/sqlite3
+    vendor/SQLiteCpp/include
+)
+
 ### LITECORE LIBRARY:
 
 # SRC defined in platform CMake files
 add_library(LiteCoreStatic STATIC ${ALL_SRC_FILES})
-target_compile_definitions(LiteCoreStatic PRIVATE -DLITECORE_IMPL)
+target_compile_definitions(
+    LiteCoreStatic PRIVATE 
+    -DLITECORE_IMPL
+    -DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1  # Default to NORMAL sync mode on SQLite (safe with WAL mode)
+    -DSQLITE_LIKE_DOESNT_MATCH_BLOBS    # Optimize SQLite "like" queries
+    -DSQLITE_OMIT_SHARED_CACHE          # Allows SQLite to discard shared cache, eliminating some branches
+    -DSQLITE_OMIT_DECLTYPE              # Disable returning the declared column type from query (reduces memory usage)
+    -DSQLITE_OMIT_DATETIME_FUNCS        # Don't compile SQLite date functions
+    -DSQLITE_ENABLE_EXPLAIN_COMMENTS    # Add comment text to the result of sqlite3_explain
+    -DSQLITE_DISABLE_FTS3_UNICODE       # Disable FTS3 unicode61 tokenizer (not used in LiteCore)
+    -DSQLITE_ENABLE_MEMORY_MANAGEMENT   # Enable sqlite3_release_memory to release unused memory faster
+    -DSQLITE_ENABLE_STAT4               # Enable enhanced query planning
+    -DSQLITE_HAVE_ISNAN                 # Use system provided isnan()
+    -DHAVE_LOCALTIME_R                  # Use localtime_r instead of localtime
+    -DHAVE_USLEEP                       # Allow millisecond precision sleep
+    -DHAVE_UTIME                        # Use utime() instead of utimes()
+    -DSQLITE_OMIT_LOAD_EXTENSION        # Disable extensions (not needed for LiteCore)
+    -DSQLITE_ENABLE_FTS4                # Build FTS versions 3 and 4
+    -DSQLITE_ENABLE_FTS3_PARENTHESIS    # Allow AND and NOT support in FTS parser
+    -DSQLITE_ENABLE_FTS3_TOKENIZER      # Allow LiteCore to define a tokenizer
+)
+
+if(BUILD_ENTERPRISE)
+    target_compile_definitions(
+        LiteCoreStatic PRIVATE
+        -DSQLITE_HAS_CODEC              # Enables SQLite encryption extension (SEE)
+    )   
+endif()
+
+target_include_directories(
+    LiteCoreStatic PRIVATE
+    vendor/fleece/API
+    vendor/fleece/Fleece/Core
+    vendor/fleece/Fleece/Mutable
+    vendor/fleece/Fleece/Support
+    LiteCore/BlobStore
+    LiteCore/Database
+    LiteCore/Query
+    LiteCore/RevTrees
+    LiteCore/Storage
+    LiteCore/Support
+    vendor/mbedtls/include
+    C
+    C/include 
+    vendor/BLIP-Cpp/include/blip_cpp
+    vendor/BLIP-Cpp/src/util
+    vendor/SQLiteCpp/sqlite3
+    vendor/SQLiteCpp/include
+    vendor/sqlite3-unicodesn
+    vendor/civetweb/include
+)
 
 if(WIN32)
     add_library(LiteCore SHARED MSVC/SQLiteTempDirectory.cc) #No-op for non-UWP
@@ -223,12 +270,6 @@ install (
 if (JNI)
     add_subdirectory(Java)
 endif()
-
-### REST LISTENER LIBRARY:
-
-add_library(LiteCoreREST SHARED LiteCore/Support/Logging_Stub.cc)
-target_link_libraries(LiteCoreREST PRIVATE ${WHOLE_LIBRARY_FLAG} LiteCoreREST_Static ${NO_WHOLE_LIBRARY_FLAG} LiteCore FleeceStatic BLIPStatic)
-configure_litecore_rest()
 
 ### TESTS:
 

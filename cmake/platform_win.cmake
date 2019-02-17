@@ -98,6 +98,12 @@ function(configure_litecore_win)
         LiteCore PROPERTIES LINK_FLAGS
         "/def:${PROJECT_SOURCE_DIR}/C/c4.def"
     )
+
+    target_include_directories(
+        LiteCore PRIVATE
+        vendor/fleece/API
+        vendor/fleece/Fleece/Support
+    )
     
     # Link with subproject libz and Windows sockets lib
     target_link_libraries(
@@ -108,6 +114,13 @@ function(configure_litecore_win)
 endfunction()
 
 function(configure_litecore_rest)
-    set_target_properties(LiteCoreREST PROPERTIES LINK_FLAGS
-              "/def:${PROJECT_SOURCE_DIR}/REST/c4REST.def")
+    set_target_properties(
+        LiteCoreREST PROPERTIES LINK_FLAGS
+        "/def:${CMAKE_CURRENT_SOURCE_DIR}/c4REST.def"
+    )
+
+    target_link_libraries(
+        LiteCoreREST PRIVATE
+        mbedcrypto
+    )
 endfunction()

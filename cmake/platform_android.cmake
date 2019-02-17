@@ -33,8 +33,8 @@ function(configure_litecore)
     
     target_link_libraries(
         LiteCore PRIVATE 
-        "atomic" 
-        "log" 
+        atomic
+        log
         zlibstatic
     )
 endfunction()
@@ -42,7 +42,8 @@ endfunction()
 function(configure_litecore_rest)
     target_link_libraries(
         LiteCoreREST PRIVATE
-        "atomic"
-        "log"
+        atomic
+        log
+        mbedcrypto
     )
 endfunction()

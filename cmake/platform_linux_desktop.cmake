@@ -78,5 +78,8 @@ function(configure_litecore)
 endfunction()
 
 function(configure_litecore_rest)
-    # No-op
+    target_link_libraries(
+        LiteCoreREST PRIVATE
+        mbedcrypto
+    )
 endfunction()

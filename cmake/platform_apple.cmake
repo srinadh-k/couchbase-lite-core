@@ -47,4 +47,9 @@ function(configure_litecore_rest)
         LiteCoreREST PROPERTIES LINK_FLAGS
         "-exported_symbols_list ${PROJECT_SOURCE_DIR}/REST/c4REST.exp"
     )
+
+    target_link_libraries(
+        LiteCoreREST PRIVATE
+        "-framework Security"
+    )
 endfunction()
