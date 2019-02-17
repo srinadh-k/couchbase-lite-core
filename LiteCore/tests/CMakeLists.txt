@@ -92,7 +92,6 @@ target_link_libraries(
     CppTests PRIVATE
     LiteCoreStatic
     FleeceStatic
-    mbedcrypto
     SQLite3_UnicodeSN
     BLIPStatic
     CivetWeb

@@ -45,7 +45,7 @@ endfunction()
 function(configure_litecore_rest)
     set_target_properties(
         LiteCoreREST PROPERTIES LINK_FLAGS
-        "-exported_symbols_list ${PROJECT_SOURCE_DIR}/REST/c4REST.exp"
+        "-exported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/c4REST.exp"
     )
 
     target_link_libraries(

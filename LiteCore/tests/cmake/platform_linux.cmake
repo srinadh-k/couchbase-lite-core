@@ -27,6 +27,7 @@ function(setup_build)
         ${LIBCXXABI_LIB}
         ${ICU4C_COMMON}
         ${ICU4C_I18N}
+        mbedcrypto
         z
         pthread
         dl
