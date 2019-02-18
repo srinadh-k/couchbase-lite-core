@@ -1,12 +1,6 @@
 include("${CMAKE_CURRENT_LIST_DIR}/platform_linux.cmake")
 
-function(setup_build)
-    setup_build_linux()
-    
-    if(NOT ${LITECORE_DISABLE_ICU})
-        add_definitions(-DLITECORE_USES_ICU=1)
-    endif()
-
+function(setup_globals)
     # Enable relative RPATHs for installed bits
     set (CMAKE_INSTALL_RPATH "\$ORIGIN")
 
@@ -57,7 +51,7 @@ function(setup_build)
     endif()
     message("Using libicu header files in ${LIBICU_INCLUDE}")
     include_directories("${LIBICU_INCLUDE}")
-    
+
     # libc++ is special - clang will introduce an implicit -lc++ when it is used.
     # That means we need to tell the linker the path to the directory containing
     # libc++.so rather than just linking the .so directly. This must be done
@@ -66,20 +60,24 @@ function(setup_build)
     link_directories (${LIBCXX_LIBDIR})
 endfunction()
 
-function(configure_litecore)
-    configure_litecore_linux()
+function(setup_litecore_build)
+    setup_litecore_build_linux()
     
+    if(NOT ${LITECORE_DISABLE_ICU})
+        target_compile_definitions(
+            LiteCoreStatic PRIVATE
+            -DLITECORE_USES_ICU=1
+        )
+    endif()
+
     target_link_libraries(
-        LiteCore PUBLIC 
+        LiteCore PRIVATE 
         z 
         ${ICU4C_COMMON} 
         ${ICU4C_I18N}
     )
 endfunction()
 
-function(configure_litecore_rest)
-    target_link_libraries(
-        LiteCoreREST PRIVATE
-        mbedcrypto
-    )
+function(setup_rest_build)
+    # No-op
 endfunction()

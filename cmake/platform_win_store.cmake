@@ -1,19 +1,19 @@
 include("${CMAKE_CURRENT_LIST_DIR}/platform_win.cmake")
 
-function(setup_build)
-    setup_build_win()
+function(setup_litecore_build)
+    setup_litecore_build_win()
     
-    add_definitions(
+    target_compile_definitions(
+        LiteCoreStatic PRIVATE
         -DSQLITE_OS_WINRT               # Signal SQLite to use WinRT system calls instead of Win32
-        -DMBEDTLS_NO_PLATFORM_ENTROPY   # mbedcrypto entropy support does not account for Windows Store builds
-        -D_WIN32_WINNT=0x0602           # Support back to Windows 8
-    )      
-endfunction()
+    )
 
-function(configure_litecore)
-    configure_litecore_win()
-    
-    # Enable Windows Runtime compilation
+    target_compile_definitions(
+        mbedcrypto PRIVATE
+        -DMBEDTLS_NO_PLATFORM_ENTROPY   # mbedcrypto entropy support does not account for Windows Store builds
+    )
+
+     # Enable Windows Runtime compilation
     set_target_properties(
         LiteCore PROPERTIES COMPILE_FLAGS 
         /ZW

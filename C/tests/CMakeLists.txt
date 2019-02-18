@@ -22,9 +22,9 @@ In addition, there are also some system dependencies that are not listed here
 cmake_minimum_required (VERSION 3.9)
 project (C4Tests)
 
-if(ANDROID)
+if(ANDROID OR WINDOWS_STORE)
     # No sense building it for Android since using an Android executable is
-    # tricky and strange
+    # tricky and strange.  Windows Store projects are also not supported here.
     return()
 endif()
 

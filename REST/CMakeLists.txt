@@ -111,4 +111,4 @@ target_link_libraries(
     CivetWeb
     Support
 )
-configure_litecore_rest()
+setup_rest_build()

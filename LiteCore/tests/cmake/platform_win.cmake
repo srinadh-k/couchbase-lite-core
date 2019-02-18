@@ -20,6 +20,7 @@ function(setup_build)
     target_include_directories(
         CppTests PRIVATE
         ${TOP}vendor/mbedtls/include
+        ${TOP}MSVC
     )
 
     target_link_libraries(

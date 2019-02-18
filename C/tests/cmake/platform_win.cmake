@@ -20,6 +20,11 @@ function(setup_build)
     set(FilesToCopy ${BIN_TOP}/\$\(Configuration\)/LiteCore
                     ${BIN_TOP}/\$\(Configuration\)/LiteCoreREST)
 
+    target_include_directories(
+        C4Tests PRIVATE
+        ${TOP}MSVC
+    )
+    
     add_custom_command(
         TARGET C4Tests POST_BUILD
         COMMAND ${CMAKE_COMMAND}

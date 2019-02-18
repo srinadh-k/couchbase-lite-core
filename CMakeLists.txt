@@ -64,8 +64,6 @@ option(LITECORE_DISABLE_ICU "Disables ICU linking" OFF)
 
 add_definitions(
     -DCMAKE                             # Let the source know this is a CMAKE build
-    #-D__STDC_LIMIT_MACROS               # Ensure the presence of UINT64_MAX, etc
-    #-DNOMINMAX                          # Get rid of pesky Windows macros for min and max
 )
 
 if(BUILD_ENTERPRISE)
@@ -101,7 +99,7 @@ if(CODE_COVERAGE_ENABLED)
   endif()
 endif()
 
-setup_build()
+setup_globals()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LITECORE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LITECORE_CXX_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${LITECORE_SHARED_LINKER_FLAGS}")
@@ -128,11 +126,11 @@ include_directories(${GENERATED_HEADERS_DIR})
 
 ### SUPPORT LIBRARY:
 
-# SRC defined in platform CMake files
-add_library(Support STATIC
-    Replicator/Address.cc
+set_support_source(RESULT SUPPORT_SRC)
+message(${SUPPORT_SRC})
+add_library(
+    Support STATIC
     ${SUPPORT_SRC}
-    ${PLATFORM_SRC}
 )
 
 target_compile_definitions(
@@ -144,18 +142,26 @@ target_include_directories(
     Support PRIVATE
     vendor/fleece/API
     vendor/fleece/Fleece/Support
+    LiteCore/BlobStore
+    LiteCore/Database
     LiteCore/Support
+    LiteCore/Storage
+    LiteCore/Query
+    LiteCore/RevID
     vendor/mbedtls/include
     C
     C/include 
+    vendor/BLIP-Cpp/include/blip_cpp
     vendor/BLIP-Cpp/src/util
+    vendor/BLIP-Cpp/src/websocket
     vendor/SQLiteCpp/sqlite3
     vendor/SQLiteCpp/include
 )
+setup_support_build()
 
 ### LITECORE LIBRARY:
 
-# SRC defined in platform CMake files
+set_litecore_source(RESULT ALL_SRC_FILES)
 add_library(LiteCoreStatic STATIC ${ALL_SRC_FILES})
 target_compile_definitions(
     LiteCoreStatic PRIVATE 
@@ -211,6 +217,10 @@ target_include_directories(
 
 if(WIN32)
     add_library(LiteCore SHARED MSVC/SQLiteTempDirectory.cc) #No-op for non-UWP
+    target_include_directories(
+        LiteCore PRIVATE
+        vendor/SQLiteCpp/sqlite3
+    )
 else()
     file(WRITE empty.cpp)
     add_library(LiteCore SHARED empty.cpp)
@@ -232,7 +242,7 @@ set(
 )
 
 target_link_libraries(LiteCore PRIVATE ${LITECORE_LIBRARIES_PRIVATE})
-configure_litecore()
+setup_litecore_build()
 
 install (
     TARGETS LiteCore
