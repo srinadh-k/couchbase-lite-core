@@ -16,6 +16,11 @@ function(set_source_files)
 endfunction()
 
 function(setup_build)
+    target_include_directories(
+        C4Tests PRIVATE
+        ${TOP}LiteCore/Unix
+    )
+
     target_link_libraries(
         C4Tests PRIVATE
         pthread
