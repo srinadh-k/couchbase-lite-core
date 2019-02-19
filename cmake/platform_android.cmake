@@ -1,6 +1,8 @@
 include("${CMAKE_CURRENT_LIST_DIR}/platform_linux.cmake")
 
 function(setup_globals)
+    setup_globals_linux()
+
     # See: https://github.com/android-ndk/ndk/issues/477
     # The issue is also applicable for other areas like fseeko
     add_definitions(-D_FILE_OFFSET_BITS=32)
@@ -58,17 +60,16 @@ function(setup_litecore_build)
 
     target_link_libraries(
         LiteCore PRIVATE 
-        atomic
-        log
         zlibstatic
+    )
+
+    target_link_libraries(
+        LiteCore PUBLIC
+        log
+        atomic
     )
 endfunction()
 
 function(setup_rest_build)
-    target_link_libraries(
-        LiteCoreREST PRIVATE
-        atomic
-        log
-        mbedcrypto
-    )
+    # No-op
 endfunction()

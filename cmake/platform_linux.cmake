@@ -1,6 +1,6 @@
 include("${CMAKE_CURRENT_LIST_DIR}/platform_unix.cmake")
 
-function(setup_globals)
+function(setup_globals_linux)
     set(LITECORE_CRYPTO_LIB mbedcrypto CACHE INTERNAL "")
     add_definitions(-D_CRYPTO_MBEDTLS)
 
@@ -47,6 +47,13 @@ function(setup_litecore_build_linux)
 
     target_include_directories(
         LiteCoreStatic PRIVATE
+        LiteCore/Unix
+    )
+endfunction()
+
+function(setup_support_build)
+    target_include_directories(
+        Support PRIVATE
         LiteCore/Unix
     )
 endfunction()

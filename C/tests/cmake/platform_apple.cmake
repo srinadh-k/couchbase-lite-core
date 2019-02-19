@@ -21,7 +21,6 @@ function(setup_build)
     if(BUILD_ENTERPRISE)
         target_link_libraries(
             C4Tests PRIVATE  
-            "-framework CoreFoundation"
             "-framework CoreML"
             "-framework Vision"
         )

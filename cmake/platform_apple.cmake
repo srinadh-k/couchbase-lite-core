@@ -43,11 +43,22 @@ endfunction()
 function(setup_litecore_build)
     setup_litecore_build_unix()
 
+    target_link_libraries(
+        LiteCore PUBLIC
+        "-framework CoreFoundation"
+        "-framework Foundation"
+        z
+    )
+
     # Specify list of symbols to export
     set_target_properties(
         LiteCore PROPERTIES LINK_FLAGS
         "-exported_symbols_list ${PROJECT_SOURCE_DIR}/C/c4.exp"
     )
+endfunction()
+
+function(setup_support_build)
+    # No-op
 endfunction()
 
 function(setup_rest_build)

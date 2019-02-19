@@ -98,17 +98,27 @@ target_include_directories(
     LiteCoreREST PRIVATE
     ../vendor/fleece/API
     ../vendor/fleece/Fleece/Support
-    ../C/include
 )
+
+target_include_directories(
+    LiteCoreREST INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}
+)
+
 target_link_libraries(
     LiteCoreREST PRIVATE 
     ${WHOLE_LIBRARY_FLAG} 
     LiteCoreREST_Static 
     ${NO_WHOLE_LIBRARY_FLAG} 
-    LiteCore 
     FleeceStatic 
     BLIPStatic
     CivetWeb
     Support
 )
+
+target_link_libraries(
+    LiteCoreREST PUBLIC
+    LiteCore 
+)
+
 setup_rest_build()

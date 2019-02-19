@@ -1,6 +1,8 @@
 include("${CMAKE_CURRENT_LIST_DIR}/platform_linux.cmake")
 
 function(setup_globals)
+    setup_globals_linux()
+
     # Enable relative RPATHs for installed bits
     set (CMAKE_INSTALL_RPATH "\$ORIGIN")
 
@@ -58,6 +60,21 @@ function(setup_globals)
     # *before* the target declaration as it affects all subsequent targets.
     get_filename_component (LIBCXX_LIBDIR "${LIBCXX_LIB}" DIRECTORY)
     link_directories (${LIBCXX_LIBDIR})
+endfunction()
+
+function(set_support_source)
+    set(oneValueArgs RESULT)
+    cmake_parse_arguments(LINUX_SSS "" ${oneValueArgs} "" ${ARGN})
+    if(NOT DEFINED LINUX_SSS_RESULT)
+        message(FATAL_ERROR set_source_files_base needs to be called with RESULT)
+    endif()
+
+    set_litecore_source_linux(RESULT LINUX_LITECORE_FILES)
+    set(
+        ${LINUX_SSS_RESULT}
+        ${LINUX_LITECORE_FILES}
+        PARENT_SCOPE
+    )
 endfunction()
 
 function(setup_litecore_build)

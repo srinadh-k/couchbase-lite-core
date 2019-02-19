@@ -127,7 +127,6 @@ include_directories(${GENERATED_HEADERS_DIR})
 ### SUPPORT LIBRARY:
 
 set_support_source(RESULT SUPPORT_SRC)
-message(${SUPPORT_SRC})
 add_library(
     Support STATIC
     ${SUPPORT_SRC}
@@ -241,6 +240,10 @@ set(
     ${LITECORE_CRYPTO_LIB}
 )
 
+target_include_directories(
+    LiteCore INTERFACE
+    C/include
+)
 target_link_libraries(LiteCore PRIVATE ${LITECORE_LIBRARIES_PRIVATE})
 setup_litecore_build()
 

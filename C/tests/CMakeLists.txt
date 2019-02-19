@@ -42,7 +42,6 @@ else()
 endif()
 
 set_source_files(RESULT TEST_SRC)
-message(${TEST_SRC})
 add_executable(C4Tests ${TEST_SRC})
 setup_build()
 
@@ -67,11 +66,9 @@ target_include_directories(
     ${TOP}vendor/fleece/vendor/catch
     ${TOP}vendor/fleece/API
     ${TOP}vendor/fleece/Fleece/Support
-    ${TOP}C/include
     ${TOP}C
     ${TOP}Replicator
     ${TOP}Replicator/tests
-    ${TOP}REST
     ${TOP}LiteCore/Support
     ${TOP}vendor/SQLiteCpp/sqlite3
     ${TOP}vendor/civetweb/include
